@@ -3,17 +3,26 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+const isLocal = (process.env.DB_HOST || '127.0.0.1') === '127.0.0.1' || (process.env.DB_HOST || '127.0.0.1') === 'localhost';
+
 const dbConfig = {
   user: process.env.DB_USER || 'postgres',
   password: process.env.DB_PASSWORD || 'password',
   host: process.env.DB_HOST || '127.0.0.1',
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_DATABASE || 'lead_management',
+  ssl: isLocal ? false : { rejectUnauthorized: false },
 };
 
 let pool;
 
 async function ensureDatabaseExists() {
+  // Skip on hosted databases (Neon, Supabase, etc.) — they manage DBs themselves
+  if (!isLocal) {
+    console.log('Using remote database, skipping database creation check.');
+    return;
+  }
+
   const clientConfig = { ...dbConfig, database: 'postgres' };
   const client = new Client(clientConfig);
 
