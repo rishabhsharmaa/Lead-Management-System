@@ -161,7 +161,7 @@ The app is deployed using:
 DB_USER=<neon_user>
 DB_PASSWORD=<neon_password>
 DB_HOST=<neon_host>
-DB_PORT=5432
+DB_PORT=5432 
 DB_DATABASE=<neon_database>
 ```
 
