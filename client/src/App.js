@@ -13,10 +13,19 @@ function App() {
   const fetchLeads = async () => {
     try {
       const res = await getLeads();
-      setLeads(res.data);
-      setError('');
+
+      // SAFETY CHECK: Make sure the backend actually sent an array
+      if (Array.isArray(res.data)) {
+        setLeads(res.data);
+        setError('');
+      } else {
+        // If it's not an array, throw an error to trigger the catch block
+        throw new Error('Invalid data format from server');
+      }
+
     } catch (err) {
-      setError('Failed to fetch leads. Make sure the server is running.');
+      setLeads([]); // Ensure leads stays an array so Dashboard doesn't crash
+      setError('Failed to fetch leads. Check your backend/database connection.');
     } finally {
       setLoading(false);
     }
